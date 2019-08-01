@@ -69,10 +69,6 @@ void GradeBook::processGrades() {
 
 	outputGrades();
 
-	// call function getAverage to calculate the average grade
-	cout << "\nClass average is " << setprecision( 2 ) << fixed << 
-		getAverage() << endl;
-
 	// call functions getMinimum and getMaximum
 	cout << "Lowest grade is " << getMinimum() << "\nHighest grade is "
 		<< getMaximum() << endl;
@@ -83,25 +79,37 @@ void GradeBook::processGrades() {
 
 void GradeBook::outputGrades() {
 
-	int student = 0;
+	int student = 0, test;
+	double average;
 
-	cout << "\nThe Grades are:\n";
+	cout << "\nThe Grades are:\n\n";
+	cout << "            "; // align column heads
+
+	for (test = 0; test < tests; test++)
+		cout << "Test " << test + 1 << " ";
+
+	cout << "Average" <<endl;
 
 	for (student = 0; student < students; student++) {
-		cout << "Student " << setw(2) << student + 1 << ": "
-			<< setw(3) << grades[student] << endl;
+		cout << "Student " << setw(2) << student + 1;
+
+		for (test = 0; test < tests; test++)
+			cout << setw(8) << grades[student][test];
+
+		average = getAverage(grades[student], tests);
+		cout << setw(9) << setprecision(2) << fixed << average << endl;
 	}
 
 }
 
-double GradeBook::getAverage() {
+double GradeBook::getAverage(const int setOfGrades[], const int grades) {
 
-	int total = 0, student = 0;
+	int total = 0, grade = 0;
 
-	for (student = 0; student < students; student++)
-		total += grades[student][test];
+	for (grade = 0; grade < grades; grade++)
+		total += setOfGrades[grade];
 
-	return static_cast <double> (total) / students;
+	return static_cast <double> (total) / grades;
 }
 
 int GradeBook::getMinimum() {
@@ -133,12 +141,13 @@ int GradeBook::getMaximum() {
 
 void GradeBook::outputBarChart() {
 
-	int student, count, stars;
+	int student, test, count, stars;
 	const int frequencySize = 11;
 	int frequency[frequencySize] = {};
 
 	for (student = 0; student < students; student++) {
-		frequency[grades[student][test] / 10 ]++;
+		for (test = 0; test < tests; test++)
+			frequency[grades[student][test] / 10 ]++;
 	}
 
 	cout << "\nGrade distribution:" << endl;
